@@ -18,9 +18,18 @@ const Index = () => {
     window.open(url, "_blank");
   };
 
+  const extractVideoId = (url) => {
+    const regex = /(?:youtube(?:-nocookie)?\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+  };
+
   const fetchVideoInfo = async () => {
     try {
-      const videoId = new URL(videoUrl).searchParams.get("v");
+      const videoId = extractVideoId(videoUrl);
+      if (!videoId) {
+        throw new Error("Invalid YouTube URL");
+      }
       const response = await fetch(`https://example.com/api/video-info?videoId=${videoId}`);
       const data = await response.json();
       setVideoInfo(data);
